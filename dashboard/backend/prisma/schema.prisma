@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String         @id @default(cuid())
+  email         String         @unique
+  name          String
+  passwordHash  String         @map("password_hash")
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+  refreshTokens RefreshToken[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@index([token])
+  @@map("refresh_tokens")
+}
+
+model MetricSnapshot {
+  id        String   @id @default(cuid())
+  date      DateTime @db.Date
+  // KPI values
+  totalUsers      Int    @default(0) @map("total_users")
+  activeUsers     Int    @default(0) @map("active_users")
+  totalRevenue    Float  @default(0) @map("total_revenue")
+  conversionRate  Float  @default(0) @map("conversion_rate")
+  // Time-series trend data
+  pageViews       Int    @default(0) @map("page_views")
+  sessions        Int    @default(0) @map("sessions")
+  bounceRate      Float  @default(0) @map("bounce_rate")
+  avgSessionDuration Float @default(0) @map("avg_session_duration")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([date])
+  @@index([date])
+  @@map("metric_snapshots")
+}
+
+model Alert {
+  id        String     @id @default(cuid())
+  title     String
+  message   String
+  severity  AlertSeverity @default(INFO)
+  status    AlertStatus   @default(ACTIVE)
+  source    String     @default("system")
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+
+  @@index([status])
+  @@index([severity])
+  @@index([createdAt])
+  @@map("alerts")
+}
+
+enum AlertSeverity {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+  INFO
+}
+
+enum AlertStatus {
+  ACTIVE
+  ACKNOWLEDGED
+  RESOLVED
+}

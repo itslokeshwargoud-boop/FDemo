@@ -1,0 +1,28 @@
+reputation-monitor/frontend/.next/
+reputation-monitor/frontend/node_modules/
+reputation-monitor/frontend/tsconfig.tsbuildinfo
+reputation-monitor/frontend/package-lock.json
+reputation-monitor/frontend/.env.local
+__pycache__/
+*.py[cod]
+*.pyc
+.env
+*.env
+.venv/
+venv/
+.DS_Store
+
+# Dashboard
+node_modules/
+dist/
+*.tsbuildinfo
+package-lock.json
+
+# SQLite data
+reputation-monitor/frontend/data/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.db
+*.db-wal
+*.db-shm
